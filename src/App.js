@@ -1,34 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+// import React, { useState, useEffect } from "react";
 import axios from "axios";
 // import logo from "./logo.svg";
 // import "./App.css";
+import { QueryClient, useQuery } from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
-  const [isLoading, setLoading] = useState(false);
-  const [isError, setError] = useState(false);
-  const [data, setData] = useState({});
+  const { isLoading, error, data } = useQuery("fetchLuke", () =>
+    axios("http://swapi.dev/api/people/1/")
+  );
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setError(false);
-      setLoading(true);
+  if (isLoading) {
+    return <span>Loading...</span>;
+  }
+  // const [isLoading, setLoading] = useState(false);
+  // const [isError, setError] = useState(false);
+  // const [data, setData] = useState({});
 
-      try {
-        const response = await axios("http://swapi.dev/api/people/1/");
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setError(false);
+  //     setLoading(true);
 
-        setData(response.data);
-      } catch (error) {
-        setError(true);
-      }
-      setLoading(false);
-    };
-    fetchData();
-  }, []);
+  //     try {
+  //       const response = await axios("http://swapi.dev/api/people/1/");
+
+  //       setData(response.data);
+  //     } catch (error) {
+  //       setError(true);
+  //     }
+  //     setLoading(false);
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <div className="App">
       <h1>React Query example with Star Wars API</h1>
-      {isError && <div>Something went wrong ...</div>}
+      {error && <div>Something went wrong ...</div>}
 
       {isLoading ? (
         <div>Loading ...</div>
