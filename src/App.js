@@ -1,51 +1,38 @@
 import React from "react";
 // import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 // import logo from "./logo.svg";
 // import "./App.css";
-import { QueryClient, useQuery } from "react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 
 const queryClient = new QueryClient();
 
 function App() {
-  const { isLoading, error, data } = useQuery("fetchLuke", () =>
-    axios("http://swapi.dev/api/people/1/")
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+    </QueryClientProvider>
+  );
+}
+
+function Example() {
+  const { isLoading, error, data } = useQuery("repoData", () =>
+    fetch(
+      "https://api.github.com/repos/tannerlinsley/react-query"
+    ).then((res) => res.json())
   );
 
-  if (isLoading) {
-    return <span>Loading...</span>;
-  }
-  // const [isLoading, setLoading] = useState(false);
-  // const [isError, setError] = useState(false);
-  // const [data, setData] = useState({});
+  if (isLoading) return "Loading...";
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setError(false);
-  //     setLoading(true);
-
-  //     try {
-  //       const response = await axios("http://swapi.dev/api/people/1/");
-
-  //       setData(response.data);
-  //     } catch (error) {
-  //       setError(true);
-  //     }
-  //     setLoading(false);
-  //   };
-  //   fetchData();
-  // }, []);
+  if (error) return "An error has occurred: " + error.message;
 
   return (
-    <div className="App">
-      <h1>React Query example with Star Wars API</h1>
-      {error && <div>Something went wrong ...</div>}
-
-      {isLoading ? (
-        <div>Loading ...</div>
-      ) : (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      )}
+    <div>
+      <h1>{data.name}</h1>
+      <p>{data.description}</p>
+      <strong>👀 {data.subscribers_count}</strong>{" "}
+      <strong>✨ {data.stargazers_count}</strong>{" "}
+      <strong>🍴 {data.forks_count}</strong>
     </div>
   );
 }
